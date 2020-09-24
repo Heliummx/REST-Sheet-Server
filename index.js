@@ -23,7 +23,7 @@ app.use(express.urlencoded({
 app.use(express.json());
 
 app.use(basicAuth({
-  users: { 'hiper-vinos': 'Hidalgo3408!' }
+  users: { process.env.HTTP_USER: process.env.HTTP_PASS }
 }))
 
 app.post("/", (request, res) => {
