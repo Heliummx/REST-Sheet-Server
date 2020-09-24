@@ -22,8 +22,11 @@ app.use(express.urlencoded({
 
 app.use(express.json());
 
+const HTTP_USER = process.env.HTTP_USER;
+const HTTP_PASS = process.env.HTTP_PASS
+
 app.use(basicAuth({
-  users: { process.env.HTTP_USER: process.env.HTTP_PASS }
+  users: { HTTP_USER : process.env.HTTP_PASS }
 }))
 
 app.post("/", (request, res) => {
