@@ -18,14 +18,33 @@ app.post("/", (request, res) => {
     res.sendStatus(200);
   });
   
-  app.get("/getAllProducts", (req, res) => {
-    shopManager.getAllProducts((products, index) => {
-      let filteredVariants = products.map((product) => {
-        let r = product.variants[0];
-        r.title=product.title;
-        r.imageUrl = product.images[0].src;
-        return r;
-      });
+    app.get("/getAllProducts", (req, res) => {
+    shopManager.getAllProducts((products, index) => {        
+        let filteredVariants = []
+        products.forEach(product => {
+        for(variant in product.variants){
+            let r = product.variants[variant];
+            r.tags = product.tags;
+            r.vendor = product.vendor;	
+            r.title=product.title+" - "+product.variants[variant].option1;
+
+	    console.log("OPTION 2: "+product.variants[variant].option2)
+	    if(product.variants[variant].option2){
+		r.title+=" "+product.variants[variant].option2;
+	    }
+
+            if(product.images[0]!=undefined){
+                r.imageUrl = product.images[0].src;
+            }
+            else{
+                r.imageUrl="";
+            }
+
+            filteredVariants.push(r);
+        }
+        
+        }); 
+
       let data = filteredVariants.map((variant) => {
         return {
           "sku":variant.sku,
@@ -35,11 +54,13 @@ app.post("/", (request, res) => {
           "price":variant.price,
           "stock":variant.inventory_quantity,
           "imageURL":variant.imageUrl,
-          "compareAtPrice":variant.compare_at_price
+          "compareAtPrice":variant.compare_at_price,
+	  "tags":variant.tags,
+          "vendor":variant.vendor
         };
       })
       res.json(data);
-    //  console.log(data)
+      //console.log(data)
     });
   });
   
@@ -48,7 +69,7 @@ app.post("/", (request, res) => {
   app.get("/getLocations", (req, res) => {
     let location
     shopManager.getLocationId((result) => {
-      console.log(result)
+    res.json(result)
     })
   });
   
@@ -75,10 +96,9 @@ app.post("/", (request, res) => {
   })
   
   app.post("/updateStock",(req,res)=>{
-    let locationId="38478151812";
+    let locationId=process.env.LOCATION_ID;  
     console.log(req.body);
     res.sendStatus(200);
-  
     for (let product of req.body) {
       shopManager.updateInventory(
         product.inventory_item_id, 
