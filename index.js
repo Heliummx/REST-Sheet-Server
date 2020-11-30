@@ -19,6 +19,8 @@ app.use(process.env.ROUTE || "/", basic_route);
 
 
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Started on PORT ${PORT}`);
 })
+
+server.setTimeout(300000);
