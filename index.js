@@ -9,7 +9,7 @@ const basicAuth = require('express-basic-auth')
 app.use(express.json());
 
 const HTTP_USER = process.env.HTTP_USER;
-const HTTP_PASS = process.env.HTTP_PASS
+const HTTP_PASS = process.env.HTTP_PASS;
 
 app.use(basicAuth({
   users: { HTTP_USER : process.env.HTTP_PASS }

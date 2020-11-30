@@ -1,7 +1,7 @@
 const express = require("express");
+const axios = require('axios');
 const ShopifyInventoryManager = require('./lib/shopify-inventory');
 require('dotenv').config();
-
 
 const app = express.Router();
 
@@ -74,36 +74,66 @@ app.post("/", (request, res) => {
   });
   
   app.post("/updatePrice",(req,res)=>{
-      console.log(req.body);
+         //console.log(req.body.length)
+         let updates=0;
+         for (let product of req.body) {
+            shopManager.updatePrice(product.id, product.price, (response) => {
+              updates++;
+              if(updates == req.body.length){
+                axios.post(process.env.SHEET_ENDPOINT, {
+                  message:"Price"
+               })
+               .then(function (response) {})
+               .catch(function (error) {
+                 console.log(error);
+               });     
+              }
+              console.log(updates+"/"+req.body.length)
+            });
+        }
       res.sendStatus(200);
-  
-      for (let product of req.body) {
-        shopManager.updatePrice(
-          product.id,
-          product.price)
-      }
   })
   
   app.post("/updateCompareAtPrice",(req,res)=>{
-//    console.log(req.body);
-    res.sendStatus(200);
-  
+//    console.log(req.body)  
+    let updates=0;
     for (let product of req.body) {
-      shopManager.updateCompareAtPrice(
-        product.id,
-        product.compare_at_price)
+      shopManager.updateCompareAtPrice(product.id, product.compare_at_price,  (response) => {
+        updates++;
+        if(updates == req.body.length){
+          axios.post(process.env.SHEET_ENDPOINT, {
+            message:"CompareAtPrice"
+         })
+         .then(function (response) {})
+         .catch(function (error) {
+           console.log(error);
+         });     
+        }
+        console.log(updates+"/"+req.body.length)
+      })
     }
+    res.sendStatus(200);
   })
   
   app.post("/updateStock",(req,res)=>{
     let locationId=process.env.LOCATION_ID;  
 //    console.log(req.body);
     res.sendStatus(200);
+    let updates=0;
     for (let product of req.body) {
-      shopManager.updateInventory(
-        product.inventory_item_id, 
-        product.available, 
-        locationId)
+      shopManager.updateInventory(product.inventory_item_id, product.available, locationId, (response) => {
+        updates++;
+        if(updates == req.body.length){
+          axios.post(process.env.SHEET_ENDPOINT, {
+            message:"Inventory"
+         })
+         .then(function (response) {})
+         .catch(function (error) {
+           console.log(error);
+         });     
+        }
+        console.log(updates+"/"+req.body.length)
+      })
     }
   
   })
