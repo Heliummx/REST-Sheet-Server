@@ -2,13 +2,13 @@ require('dotenv').config();
 
 const InventoryManagement = require('./lib/inventory-management');
 
-function main(){
-  let BulkManager = new InventoryManagement({
-    hostname: process.env.AGROBOLDER_HOSTNAME,
-    user: process.env.AGROBOLDER_USER,
-    pass: process.env.AGROBOLDER_PASS
-  })
-  
+let BulkManager = new InventoryManagement({
+  hostname: process.env.AGROBOLDER_HOSTNAME,
+  user: process.env.AGROBOLDER_USER,
+  pass: process.env.AGROBOLDER_PASS
+})
+
+function test(){
   let variants = [
     {'sku': 'abc', 'variant_id': 37592894472385},
     {'sku': 'cbd', 'variant_id': 37607642693825},
@@ -21,5 +21,9 @@ function main(){
   })
 }
 
+function secondTest(){
+  
+}
 
-main();
+
+//main();
